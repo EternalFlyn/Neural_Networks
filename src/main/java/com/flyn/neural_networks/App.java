@@ -9,12 +9,12 @@ public class App {
 	
     public static void main(String[] args) {
     	NeuralNetworks nn = new NeuralNetworks(layer_sizes);
-    	for(Matrix m : nn.getWeight().values()) {
+    	for(Matrix m : nn.getWeight()) {
     		m.fillGaussianData().divideNumber(Math.pow(layer_sizes[0], 0.5));
     		m.printSize();
     		m.printData();
     	}
-    	for(Matrix m : nn.getBias().values()) {
+    	for(Matrix m : nn.getBias()) {
     		m.printSize();
     		m.printData();
     	}
