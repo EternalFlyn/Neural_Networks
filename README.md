@@ -7,25 +7,25 @@
 >> private final int layerLenth
 >> 紀錄類神經網路層數
 >> * **weights**
->> private HashMap<Integer, Matrix> weights
+>> private ArrayList<Matrix> weights
 >> 紀錄每個節點到下一個節點所需的權重
 >> * **biases**
->> private HashMap<Integer, Matrix> biases
+>> private ArrayList<Matrix> biases
 >> 紀錄每個節點到下一個節點所需的偏移量
 >> ### Constructor
 >> * **NeuralNetworks**
 >> public NeuralNetworks(int[] layer_sizes)
 >> layer_sizes 輸入類神經網路需要的節點數和層數
->> ex: new int[] {3, 5, 10} 輸入層節點數3 隱藏層節點數5 輸出層節點數10
+>> ex: new int[] {3, 5, 7, 10} 輸入層節點數3 第一層隱藏層節點數5 第2層隱藏層節點數7 輸出層節點數10
 >> ### Method
 >> * **predict**
 >> public Matrix predict(Marix data)
 >> 輸入對應的資料，產生預測結果
 >> * **getWeight**
->> public HashMap<Integer, Matrix> getWeight()
+>> public ArrayList<Matrix> getWeight()
 >> 取得所有權重
 >> * **getBias**
->> public HashMap<Integer, Matrix> getBias()
+>> public ArrayList<Matrix> getBias()
 >> 取得所有偏移量
 >> * **activation**
 >> private double activation(double x)
