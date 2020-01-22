@@ -2,19 +2,23 @@ package com.flyn.neural_networks;
 
 import com.flyn.neural_networks.first_test.Matrix;
 import com.flyn.neural_networks.first_test.NeuralNetworks;
+import com.flyn.neural_networks.training_data.TrainingImage;
+import com.flyn.neural_networks.training_data.TrainingImageViewer;
 
 public class App {
 	
 	private static int[] layer_sizes = new int[] {3, 5, 10};
 	
     public static void main(String[] args) {
+    	TrainingImageViewer viewer = new TrainingImageViewer(new TrainingImage());
+    	viewer.show();
     	NeuralNetworks nn = new NeuralNetworks(layer_sizes);
-    	for(Matrix m : nn.getWeight().values()) {
+    	for(Matrix m : nn.getWeight()) {
     		m.fillGaussianData().divideNumber(Math.pow(layer_sizes[0], 0.5));
     		m.printSize();
     		m.printData();
     	}
-    	for(Matrix m : nn.getBias().values()) {
+    	for(Matrix m : nn.getBias()) {
     		m.printSize();
     		m.printData();
     	}
