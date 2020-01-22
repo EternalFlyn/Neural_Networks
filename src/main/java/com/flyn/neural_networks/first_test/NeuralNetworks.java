@@ -49,4 +49,8 @@ public class NeuralNetworks {
 	public ArrayList<Matrix> getBias() {
 		return biases;
 	}
+
+	public ArrayList<Matrix> getNet() {
+		return net;
+	}
 }

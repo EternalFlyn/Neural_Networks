@@ -30,7 +30,7 @@ public class App {
         	//填入數據
         	double[][] dataArray = new double[layer_sizes[0]][1];
         	for(int j = 0; j < layer_sizes[0]; j++) {
-        		double temp = (double) (image.rawData[i][j]) / 255.0;
+        		double temp = (double) (image.rawData[i][j] & 0xFF) / 255.0;
         		dataArray[j][0] = temp;
         	}
         	Matrix data = new Matrix(dataArray);
