@@ -17,20 +17,18 @@ public class NeuralNetworks {
 	
 	public Matrix predict(Matrix data) {
 		Matrix result = data;
-		for(int i = 0; i < layerLength - 1; i++) {
-			result = Matrix.matrixPlus(Matrix.matrixProduct(weights.get(i), result), biases.get(i));
-			double[][] resultData = result.getData();
-			for(int a = 0; a < result.size[0]; a++) {
-				for(int b = 0; b < result.size[1]; b++) {
-					resultData[a][b] = activation(resultData[a][b]);
-				}
-			}
-		}
+		for(int i = 0; i < layerLength - 1; i++) result = activation(Matrix.matrixPlus(Matrix.matrixProduct(weights.get(i), result), biases.get(i)));
 		return result;
 	}
 	
-	private double activation(double x) {
-		return 1 / (1 + Math.exp(-x));
+	private Matrix activation(Matrix data) {
+		double[][] resultData = data.getData();
+		for(int i = 0; i < data.size[0]; i++) {
+			for(int j = 0; j < data.size[1]; j++) {
+				resultData[i][j] = 1 / (1 + Math.exp(-1 * resultData[i][j]));
+			}
+		}
+		return new Matrix(resultData);
 	}
 	
 	public ArrayList<Matrix> getWeight() {
