@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class NeuralNetworks {
 	
 	private final int layerLength;
-	private ArrayList<Matrix> weights = new ArrayList<Matrix>(), biases = new ArrayList<Matrix>();
+	private ArrayList<Matrix> weights = new ArrayList<>(), biases = new ArrayList<>(), net = new ArrayList<>();
 	
 	public NeuralNetworks(int[] layer_sizes) {
 		layerLength = layer_sizes.length;
@@ -15,10 +15,21 @@ public class NeuralNetworks {
 		}
 	}
 	
-	public Matrix predict(Matrix data) {
-		Matrix result = data;
-		for(int i = 0; i < layerLength - 1; i++) result = activation(Matrix.matrixPlus(Matrix.matrixProduct(weights.get(i), result), biases.get(i)));
-		return result;
+	public int predict(Matrix data) {
+		Matrix input = data;
+		for(int i = 0; i < layerLength - 1; i++) {
+			input = activation(Matrix.matrixPlus(Matrix.matrixProduct(weights.get(i), input), biases.get(i)));
+			net.add(i, input);
+		}
+		int num = 0;
+		double max = Double.MIN_VALUE;
+		for(int i = 0; i < input.size[0]; i++) {
+			if(input.getData(i, 0) > max) {
+				num = i;
+				max = input.getData(i, 0);
+			}
+		}
+		return num;
 	}
 	
 	private Matrix activation(Matrix data) {

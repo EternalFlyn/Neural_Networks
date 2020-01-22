@@ -22,6 +22,10 @@ public class Matrix {
 		return data;
 	}
 	
+	public double getData(int a, int b) {
+		return data[a][b];
+	}
+	
 	public Matrix fillOne() {
 		for(int i = 0; i < size[0]; i++) {
 			for(int j = 0; j < size[1]; j++) {

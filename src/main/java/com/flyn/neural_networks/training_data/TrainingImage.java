@@ -4,28 +4,38 @@ import java.awt.image.BufferedImage;
 
 public class TrainingImage {
 	
-	public final BufferedImage[] data;
+	public final byte[][] rawData;
+	public final BufferedImage[] imageData;
 	public final int magic_number, itemAmount, rows, columns;
 
 	public TrainingImage() {
-		byte[] tempData = Utils.read(getClass().getResourceAsStream("./train-images.idx3-ubyte"));
-		magic_number = Utils.byteToInt(tempData, 0);
-		itemAmount = Utils.byteToInt(tempData, 4);
-		rows = Utils.byteToInt(tempData, 8);
-		columns = Utils.byteToInt(tempData, 12);
-		data = new BufferedImage[itemAmount];
-		for(int i = 0; i < itemAmount; i++) data[i] = getImage(tempData, i);
+		byte[] data = Utils.read(getClass().getResourceAsStream("./train-images.idx3-ubyte"));
+		magic_number = Utils.byteToInt(data, 0);
+		itemAmount = Utils.byteToInt(data, 4);
+		rows = Utils.byteToInt(data, 8);
+		columns = Utils.byteToInt(data, 12);
+		rawData = sortData(data);
+		imageData = new BufferedImage[itemAmount];
+		for(int i = 0; i < itemAmount; i++) imageData[i] = getImage(rawData[i]);
 	}
 	
-	private BufferedImage getImage(byte[] data, int imgNum) {
-		int offset = 16 + rows * columns * imgNum;
+	private byte[][] sortData(byte[] data) {
+		byte[][] result = new byte[itemAmount][rows * columns];
+		for(int i = 0; i < itemAmount; i++) {
+			for(int j = 0; j < rows * columns; j++) {
+				result[i][j] = data[16 + i * rows * columns + j];
+			}
+		}
+		return result;
+	}
+	
+	private BufferedImage getImage(byte[] data) {
 		BufferedImage result = new BufferedImage(rows, columns, BufferedImage.TYPE_INT_ARGB);
 		int[] rgb = new int[rows * columns];
 		for(int i = 0; i < rows * columns; i++) {
-			rgb[i] = getRGB(data[offset + i]);
+			rgb[i] = getRGB(data[i]);
 		}
 		result.setRGB(0, 0, rows, columns, rgb, 0, rows);
-		System.out.println("Image " + imgNum + " complete.");
 		return result;
 	}
 	

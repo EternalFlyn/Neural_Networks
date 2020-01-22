@@ -34,7 +34,7 @@ public class TrainingImageViewer extends JPanel implements KeyListener {
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		BufferedImage img = image.data[imageNumber];
+		BufferedImage img = image.imageData[imageNumber];
 		g.drawImage(img, 0, 0, image.rows * 20, image.columns * 20, null);
 	}
 	
