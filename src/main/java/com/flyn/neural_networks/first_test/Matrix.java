@@ -4,20 +4,29 @@ import java.util.Random;
 
 public class Matrix {
 	
-	public final int[] size;
-	
+	private final int row, column;
 	private double[][] data;
 	
-	public Matrix(int a, int b) {
-		this.data = new double[a][b];
-		size = new int[] {a, b};
+	public Matrix(int row, int column) {
+		this.data = new double[row][column];
+		this.row = row;
+		this.column = column;
 	}
 	
 	public Matrix(double[][] data) {
 		this.data = data;
-		size = new int[] {data.length, data[0].length};
+		this.row = data.length;
+		this.column = data[0].length;
 	}
 	
+	public int getRow() {
+		return row;
+	}
+
+	public int getColumn() {
+		return column;
+	}
+
 	public double[][] getData() {
 		return data;
 	}
@@ -27,8 +36,8 @@ public class Matrix {
 	}
 	
 	public Matrix fillOne() {
-		for(int i = 0; i < size[0]; i++) {
-			for(int j = 0; j < size[1]; j++) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
 				data[i][j] = 1;
 			}
 		}
@@ -36,8 +45,8 @@ public class Matrix {
 	}
 	
 	public Matrix fillRandomData() {
-		for(int i = 0; i < size[0]; i++) {
-			for(int j = 0; j < size[1]; j++) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
 				data[i][j] = new Random().nextDouble();
 			}
 		}
@@ -45,8 +54,8 @@ public class Matrix {
 	}
 	
 	public Matrix fillGaussianData() {
-		for(int i = 0; i < size[0]; i++) {
-			for(int j = 0; j < size[1]; j++) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
 				data[i][j] = new Random().nextGaussian();
 			}
 		}
@@ -55,16 +64,16 @@ public class Matrix {
 	
 	public void printData() {
 		System.out.print("[");
-		for(int i = 0; i < size[0];) {
+		for(int i = 0; i < row;) {
 			System.out.print("[");
-			for(int j = 0; j < size[1];) {
+			for(int j = 0; j < column;) {
 				System.out.print(data[i][j]);
 				j++;
-				if(j < size[1]) System.out.print(", ");
+				if(j < column) System.out.print(", ");
 				else System.out.print("]");
 			}
 			i++;
-			if(i < size[0]) System.out.println();
+			if(i < row) System.out.println();
 		}
 		System.out.println("]");
 	}
@@ -74,12 +83,12 @@ public class Matrix {
 	}
 	
 	public void printSize() {
-		System.out.println(size[0] + "x" + size[1]);
+		System.out.println(row + "x" + column);
 	}
 	
 	public Matrix plusNumber(double num) {
-		for(int i = 0; i < size[0]; i++) {
-			for(int j = 0; j < size[1]; j++) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
 				data[i][j] += num;
 			}
 		}
@@ -88,8 +97,8 @@ public class Matrix {
 	
 	
 	public Matrix minusNumber(double num) {
-		for(int i = 0; i < size[0]; i++) {
-			for(int j = 0; j < size[1]; j++) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
 				data[i][j] -= num;
 			}
 		}
@@ -98,8 +107,8 @@ public class Matrix {
 	
 	
 	public Matrix multiplyNumber(double num) {
-		for(int i = 0; i < size[0]; i++) {
-			for(int j = 0; j < size[1]; j++) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
 				data[i][j] *= num;
 			}
 		}
@@ -108,8 +117,8 @@ public class Matrix {
 	
 	
 	public Matrix divideNumber(double num) {
-		for(int i = 0; i < size[0]; i++) {
-			for(int j = 0; j < size[1]; j++) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < column; j++) {
 				data[i][j] /= num;
 			}
 		}
@@ -117,33 +126,47 @@ public class Matrix {
 	}
 	
 	public static Matrix matrixPlus(Matrix m1, Matrix m2) {
-		if(m1.size[0] != m2.size[0] || m1.size[1] != m2.size[1]) {
+		if(m1.row != m2.row || m1.column != m2.column) {
 			System.err.println("Matrix size not match!");
-			System.err.println("A : " + m1.size[0] + "x" + m1.size[1]);
-			System.err.println("B : " + m2.size[0] + "x" + m2.size[1]);
+			System.err.println("A : " + m1.row + "x" + m1.column);
+			System.err.println("B : " + m2.row + "x" + m2.column);
 			return null;
 		}
-		int a = m1.size[0], b = m1.size[1];
-		double[][] result = new double[a][b];
-		for(int i = 0; i < a; i++) {
-			for(int j = 0; j < b; j++) {
+		double[][] result = new double[m1.row][m1.column];
+		for(int i = 0; i < m1.row; i++) {
+			for(int j = 0; j < m1.column; j++) {
 				result[i][j] = m1.data[i][j] + m2.data[i][j];
 			}
 		}
 		return new Matrix(result);
 	}
 	
-	public static Matrix matrixProduct(Matrix m1, Matrix m2) {
-		if(m1.size[1] != m2.size[0]) {
+	public static Matrix matrixMinus(Matrix m1, Matrix m2) {
+		if(m1.row != m2.row || m1.column != m2.column) {
 			System.err.println("Matrix size not match!");
-			System.err.println("A : " + m1.size[0] + "x" + m1.size[1]);
-			System.err.println("B : " + m2.size[0] + "x" + m2.size[1]);
+			System.err.println("A : " + m1.row + "x" + m1.column);
+			System.err.println("B : " + m2.row + "x" + m2.column);
 			return null;
 		}
-		int a = m1.size[0], b = m2.size[1];
-		double[][] result = new double[a][b];
-		for(int i = 0; i < a; i++) {
-			for(int j = 0; j < b; j++) {
+		double[][] result = new double[m1.row][m1.column];
+		for(int i = 0; i < m1.row; i++) {
+			for(int j = 0; j < m1.column; j++) {
+				result[i][j] = m1.data[i][j] - m2.data[i][j];
+			}
+		}
+		return new Matrix(result);
+	}
+	
+	public static Matrix matrixProduct(Matrix m1, Matrix m2) {
+		if(m1.column != m2.row) {
+			System.err.println("Matrix size not match!");
+			System.err.println("A : " + m1.row + "x" + m1.column);
+			System.err.println("B : " + m2.row + "x" + m2.column);
+			return null;
+		}
+		double[][] result = new double[m1.row][m2.column];
+		for(int i = 0; i < m1.row; i++) {
+			for(int j = 0; j < m2.column; j++) {
 				result[i][j] = 0;
 				for(int r = 0; r < m2.data.length; r++) {
 					result[i][j] += m1.data[i][r] * m2.data[r][j];
@@ -151,6 +174,16 @@ public class Matrix {
 			}
 		}
 		return new Matrix(result);
+	}
+	
+	public static Matrix reverseMatrix(Matrix m) {
+		double[][] result = new double[m.column][m.row];
+	    for(int i = 0; i < m.column; i++) {
+	        for(int j = 0; j < m.row; j++) {
+	            result[i][j] = m.getData(j, i);
+	        }
+	    }
+	    return new Matrix(result);
 	}
 	
 }
