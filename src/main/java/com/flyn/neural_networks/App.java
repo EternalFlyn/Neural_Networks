@@ -34,8 +34,9 @@ public class App {
         		dataArray[j][0] = temp;
         	}
         	Matrix data = new Matrix(dataArray);
-        	nn.predict(data, label.data[i]);
+        	int result = nn.predict(data, label.data[i]);
         	nn.BGD(0.3, label.data[i]);
+        	System.out.println(result + " , " + label.data[i]);
         	System.out.println(nn.getCorrectRate());
     	}
     }

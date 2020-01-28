@@ -86,6 +86,11 @@ public class Matrix {
 		System.out.println(row + "x" + column);
 	}
 	
+	@Override
+	public String toString() {
+		return new String("Matrix [" + row + "x" + column + "]");
+	}
+	
 	public Matrix plusNumber(double num) {
 		for(int i = 0; i < row; i++) {
 			for(int j = 0; j < column; j++) {

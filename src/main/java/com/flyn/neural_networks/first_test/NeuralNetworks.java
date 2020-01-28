@@ -41,12 +41,13 @@ public class NeuralNetworks {
 	
 	public void BGD(double alpha, int answer) {
         //存每個節點gradient_b
-        Matrix biasGradientMatrix = null;
+        Matrix preBiasGradientMatrix = null;
         int answerData = 0;
         for(int i = layerLength - 2; i >= 0; i--) {
             //output -> invis2 : weight [10 x 256] bias [10 x 1]'
             //decalare bias maxtrix data storage
             double[][] biasGradientData = new double[biases.get(i).getRow()][1];
+            double[][] preBiasGradientData = new double[weights.get(i).getColumn()][1];
             double[][] weightGradientData = new double[weights.get(i).getRow()][weights.get(i).getColumn()];
             for(int j = 0; j < weights.get(i).getRow(); j++) {
                 double bias = net.get(i).getData(j, 0);
@@ -55,19 +56,20 @@ public class NeuralNetworks {
                 else answerData = 0;
                 if(i == layerLength - 2) fx = 2 * (net.get(i + 1).getData(j, 0) - answerData);
                 for(int k = 0; k < weights.get(i).getColumn(); k++) {
-                    if(i != layerLength - 2) fx = weights.get(i).getData(j, k) * biasGradientMatrix.getData(j, 0);
-                    double weight = net.get(i).getData(j , k);
+                    if(i != layerLength - 2) fx = weights.get(i).getData(j, k) * preBiasGradientMatrix.getData(j, 0);
+                    double weight = weights.get(i).getData(j , k);
                     double input = net.get(i).getData(k, 0);
                     double pieceBiasGradient = countBiasGradient(weight, input, bias, fx);
                     double weightGradient = countWeightGradient(input, pieceBiasGradient);
                     //store and splice gradient_b
                     biasGradientData[j][0] += pieceBiasGradient;
+                    preBiasGradientData[k][0] += pieceBiasGradient;
                     weightGradientData[j][k] = weightGradient;
                 }
             }
             //update
             update(i, alpha, weightGradientData, biasGradientData);
-            biasGradientMatrix = new Matrix(biasGradientData);
+            preBiasGradientMatrix = new Matrix(preBiasGradientData);
         }
     }
 	
