@@ -41,35 +41,36 @@ public class NeuralNetworks {
 	
 	public void BGD(double alpha, int answer) {
         //存每個節點gradient_b
-        Matrix preBiasGradientMatrix = null;
-        int answerData = 0;
+        Matrix nextFxMatrix = null;
         for(int i = layerLength - 2; i >= 0; i--) {
             //output -> invis2 : weight [10 x 256] bias [10 x 1]'
-            //decalare bias maxtrix data storage
-            double[][] biasGradientData = new double[biases.get(i).getRow()][1];
-            double[][] preBiasGradientData = new double[weights.get(i).getColumn()][1];
-            double[][] weightGradientData = new double[weights.get(i).getRow()][weights.get(i).getColumn()];
+            //decalare bias matrix data storage
+            Matrix biasGradient = new Matrix(biases.get(i).getRow(), 1);
+            Matrix weightGradient = new Matrix(weights.get(i).getRow(), weights.get(i).getColumn());
+            double[][] nextFxData = new double[weights.get(i).getColumn()][1];
             for(int j = 0; j < weights.get(i).getRow(); j++) {
                 double bias = net.get(i).getData(j, 0);
                 double fx = 0;
-                if(i == answer) answerData = 1;
-                else answerData = 0;
-                if(i == layerLength - 2) fx = 2 * (net.get(i + 1).getData(j, 0) - answerData);
+                if(i == layerLength - 2) {
+                	double answerData = 0;
+                    if(j == answer) answerData = 1;
+                	fx = 2 * (net.get(i + 1).getData(j, 0) - answerData);
+                }
+                else fx = nextFxMatrix.getData(j, 0);
                 for(int k = 0; k < weights.get(i).getColumn(); k++) {
-                    if(i != layerLength - 2) fx = weights.get(i).getData(j, k) * preBiasGradientMatrix.getData(j, 0);
                     double weight = weights.get(i).getData(j , k);
                     double input = net.get(i).getData(k, 0);
-                    double pieceBiasGradient = countBiasGradient(weight, input, bias, fx);
-                    double weightGradient = countWeightGradient(input, pieceBiasGradient);
+                    double pieceBiasGradientData = countBiasGradient(weight, input, bias, fx);
+                    double weightGradientData = countWeightGradient(input, pieceBiasGradientData);
                     //store and splice gradient_b
-                    biasGradientData[j][0] += pieceBiasGradient;
-                    preBiasGradientData[k][0] += pieceBiasGradient;
-                    weightGradientData[j][k] = weightGradient;
+                    biasGradient.addData(j, 0, pieceBiasGradientData);
+                    weightGradient.setData(j, k, weightGradientData);
+                    nextFxData[k][0] += weight * pieceBiasGradientData;
                 }
             }
             //update
-            update(i, alpha, weightGradientData, biasGradientData);
-            preBiasGradientMatrix = new Matrix(preBiasGradientData);
+            update(i, alpha, weightGradient, biasGradient);
+            nextFxMatrix = new Matrix(nextFxData);
         }
     }
 	
@@ -81,17 +82,15 @@ public class NeuralNetworks {
         return input * pieceBiasGradient;
     }
     
-    private void update(int layerNum, double alpha, double[][] weightGradient, double[][] biasGradient){
-        double[][] weightData = weights.get(layerNum).getData();
-        double[][] biasData = biases.get(layerNum).getData();
+    private void update(int layerNum, double alpha, Matrix weightGradient, Matrix biasGradient){
+        Matrix weight = weights.get(layerNum);
+        Matrix bias = biases.get(layerNum);
         for(int i = 0; i < biases.get(layerNum).getRow(); i++){
-            biasData[i][0] -= alpha * biasGradient[i][0];
+        	bias.addData(i, 0, -alpha * biasGradient.getData(i, 0));
             for(int j = 0; j < weights.get(layerNum).getColumn(); j++){
-                weightData[i][j] -= alpha * weightGradient[i][j];
+            	weight.addData(i, j, -alpha * weightGradient.getData(i, j));
             }
         }
-        weights.set(layerNum, new Matrix(weightData));
-        biases.set(layerNum, new Matrix(biasData));
     }
 	
 	private Matrix sigmoid(Matrix data) {

@@ -31,8 +31,23 @@ public class Matrix {
 		return data;
 	}
 	
+	public void setData(double[][] data) {
+		if(data.length != row && data[0].length != column) {
+			printNotMatchError(this, new Matrix(data));
+		}
+		this.data = data;
+	}
+	
 	public double getData(int a, int b) {
 		return data[a][b];
+	}
+	
+	public void setData(int a, int b, double data) {
+		this.data[a][b] = data;
+	}
+	
+	public void addData(int a, int b, double data) {
+		this.data[a][b] += data;
 	}
 	
 	public Matrix fillOne() {
@@ -132,9 +147,7 @@ public class Matrix {
 	
 	public static Matrix matrixPlus(Matrix m1, Matrix m2) {
 		if(m1.row != m2.row || m1.column != m2.column) {
-			System.err.println("Matrix size not match!");
-			System.err.println("A : " + m1.row + "x" + m1.column);
-			System.err.println("B : " + m2.row + "x" + m2.column);
+			printNotMatchError(m1, m2);
 			return null;
 		}
 		double[][] result = new double[m1.row][m1.column];
@@ -148,9 +161,7 @@ public class Matrix {
 	
 	public static Matrix matrixMinus(Matrix m1, Matrix m2) {
 		if(m1.row != m2.row || m1.column != m2.column) {
-			System.err.println("Matrix size not match!");
-			System.err.println("A : " + m1.row + "x" + m1.column);
-			System.err.println("B : " + m2.row + "x" + m2.column);
+			printNotMatchError(m1, m2);
 			return null;
 		}
 		double[][] result = new double[m1.row][m1.column];
@@ -164,9 +175,7 @@ public class Matrix {
 	
 	public static Matrix matrixProduct(Matrix m1, Matrix m2) {
 		if(m1.column != m2.row) {
-			System.err.println("Matrix size not match!");
-			System.err.println("A : " + m1.row + "x" + m1.column);
-			System.err.println("B : " + m2.row + "x" + m2.column);
+			printNotMatchError(m1, m2);
 			return null;
 		}
 		double[][] result = new double[m1.row][m2.column];
@@ -189,6 +198,12 @@ public class Matrix {
 	        }
 	    }
 	    return new Matrix(result);
+	}
+	
+	private static void printNotMatchError(Matrix m1, Matrix m2) {
+		System.err.println("Matrix size not match!");
+		System.err.println("A : " + m1.row + "x" + m1.column);
+		System.err.println("B : " + m2.row + "x" + m2.column);
 	}
 	
 }
