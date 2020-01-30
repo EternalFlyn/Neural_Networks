@@ -98,7 +98,7 @@ public class Matrix {
 	}
 	
 	public void printSize() {
-		System.out.println(row + "x" + column);
+		System.out.printf("%dx%d%n", row, column);
 	}
 	
 	@Override
@@ -202,8 +202,8 @@ public class Matrix {
 	
 	private static void printNotMatchError(Matrix m1, Matrix m2) {
 		System.err.println("Matrix size not match!");
-		System.err.println("A : " + m1.row + "x" + m1.column);
-		System.err.println("B : " + m2.row + "x" + m2.column);
+		System.err.printf("A : %dx%d%n", m1.row, m1.column);
+		System.err.printf("B : %dx%d%n", m2.row, m2.column);
 	}
 	
 }

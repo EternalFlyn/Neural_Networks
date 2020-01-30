@@ -4,14 +4,17 @@ import java.util.ArrayList;
 
 public class NeuralNetworks {
 	
+	public final int layerLength;
+	public final int[] layerSize;
+	
 	private int sampleSize = 0, matchSample = 0;
-	private final int layerLength;
 	private ArrayList<Matrix> weights = new ArrayList<>(), biases = new ArrayList<>(), net = new ArrayList<>();
 	
-	public NeuralNetworks(int[] layer_sizes) {
+	public NeuralNetworks(int... layer_sizes) {
 		layerLength = layer_sizes.length;
+		this.layerSize = layer_sizes;
 		for(int i = 1; i < layerLength; i++) {
-			weights.add(new Matrix(layer_sizes[i], layer_sizes[i - 1]));
+			weights.add(new Matrix(layer_sizes[i], layer_sizes[i - 1]).fillGaussianData().divideNumber(Math.pow(layerSize[i], 0.5)));
 			biases.add(new Matrix(layer_sizes[i], 1));
 		}
 		for(int i = 0; i < layerLength; i++) {
@@ -44,7 +47,7 @@ public class NeuralNetworks {
         Matrix nextFxMatrix = null;
         for(int i = layerLength - 2; i >= 0; i--) {
             //output -> invis2 : weight [10 x 256] bias [10 x 1]'
-            //decalare bias matrix data storage
+            //declare bias matrix data storage
             Matrix biasGradient = new Matrix(biases.get(i).getRow(), 1);
             Matrix weightGradient = new Matrix(weights.get(i).getRow(), weights.get(i).getColumn());
             double[][] nextFxData = new double[weights.get(i).getColumn()][1];
@@ -57,13 +60,13 @@ public class NeuralNetworks {
                 	fx = 2 * (net.get(i + 1).getData(j, 0) - answerData);
                 }
                 else fx = nextFxMatrix.getData(j, 0);
+                biasGradient.setData(j, 0, sigmoidPrime(net.get(i + 1).getData(j, 0)));
                 for(int k = 0; k < weights.get(i).getColumn(); k++) {
                     double weight = weights.get(i).getData(j , k);
                     double input = net.get(i).getData(k, 0);
                     double pieceBiasGradientData = countBiasGradient(weight, input, bias, fx);
                     double weightGradientData = countWeightGradient(input, pieceBiasGradientData);
                     //store and splice gradient_b
-                    biasGradient.addData(j, 0, pieceBiasGradientData);
                     weightGradient.setData(j, k, weightGradientData);
                     nextFxData[k][0] += weight * pieceBiasGradientData;
                 }
@@ -86,7 +89,7 @@ public class NeuralNetworks {
         Matrix weight = weights.get(layerNum);
         Matrix bias = biases.get(layerNum);
         for(int i = 0; i < biases.get(layerNum).getRow(); i++){
-        	bias.addData(i, 0, -alpha * biasGradient.getData(i, 0));
+        	bias.addData(i, 0, -alpha * biasGradient.getData(i, 0) / weight.getRow());
             for(int j = 0; j < weights.get(layerNum).getColumn(); j++){
             	weight.addData(i, j, -alpha * weightGradient.getData(i, j));
             }
@@ -107,6 +110,10 @@ public class NeuralNetworks {
         double a = 1 / (1 + Math.exp(-1 * z));
         // (1/1+e^-x)的微分 = (1/1+e^-x) * (1 - 1/1+e^-x) = sigmoid(z) * ( 1 - sigmoid(z) )
         return a * (1 - a);
+    }
+    
+    private double sigmoidPrime(double a) {
+    	return a * (1 - a);
     }
     
     public float getCorrectRate() {
