@@ -2,6 +2,7 @@ package com.flyn.neural_networks;
 
 import java.util.Random;
 
+import com.flyn.neural_networks.data_io.NNDataIO;
 import com.flyn.neural_networks.first_test.Matrix;
 import com.flyn.neural_networks.first_test.NeuralNetworks;
 import com.flyn.neural_networks.training_data.TrainingImage;
@@ -18,7 +19,9 @@ public class App {
     public static void main(String[] args) {
 //    	TrainingImageViewer viewer = new TrainingImageViewer(image);
 //    	viewer.show();
-    	NeuralNetworks nn = new NeuralNetworks(image.rows * image.columns, 50, 10);
+//    	NeuralNetworks nn = new NeuralNetworks(image.rows * image.columns, 10);
+    	NeuralNetworks nn = NNDataIO.read("test");
+    	nn.getBias().get(0).printData();
     	for(int L = 0; L < 1; L++) {
     		for(int i = testOffset; i < image.itemAmount && i < testOffset + testAmount; i++) {
     			//填入數據
@@ -33,5 +36,6 @@ public class App {
     			System.out.printf("%f%%\n", nn.getCorrectRate() * 100);
     		}
     	}
+    	NNDataIO.wirte("test", nn);
     }
 }
